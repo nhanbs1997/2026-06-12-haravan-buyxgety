@@ -1,0 +1,186 @@
+{%-assign checkUnActiveApp = ''-%}
+							{%-assign still = false-%}
+
+============================================================================================================
+{%- for item in cart.items -%}
+											{%-unless settings.promotion_hrvapp_use-%}
+											{%-if item.properties.Combo != nil-%}
+											{%-assign still = true-%}
+											{%-if checkUnActiveApp == ''-%}
+											{%-assign checkUnActiveApp = checkUnActiveApp | append: 'updates[]=0'-%}
+											{%-else-%}
+											{%-assign checkUnActiveApp = checkUnActiveApp | append: '&' | append: 'updates[]=0'-%}
+											{%-endif-%}
+											{%-elsif item.properties.BuyXGetY != nil-%}
+											{%-assign still = true -%}
+											{%-if checkUnActiveApp == ''-%}
+											{%-assign checkUnActiveApp = checkUnActiveApp | append: 'updates[]=0'-%}
+											{%-else-%}
+											{%-assign checkUnActiveApp = checkUnActiveApp | append: '&' | append: 'updates[]=0'-%}
+											{%-endif-%}
+											{%-else-%}
+											{%-if checkUnActiveApp == ''-%}
+											{%-assign checkUnActiveApp = checkUnActiveApp | append: 'updates[]=' | append: item.quantity-%}
+											{%-else-%}
+											{%-assign checkUnActiveApp = checkUnActiveApp | append: '&' | append: 'updates[]=' | append: item.quantity-%}
+											{%-endif-%}
+											{%-endif-%}
+											{%-endunless-%}
+											
+											{% comment %}<!-- Kiếm tra có khuyến mãi hay không -->{% endcomment %}
+											{%-assign prmote_check = true-%}
+											{%-if settings.promotion_hrvapp_use -%}
+													{%-if item.price == 0 or item.properties.BuyXGetY != nil or item.properties.Combo != nil -%}
+														{%-assign prmote_check = false-%}
+													{%-endif-%}
+											{%-endif-%}
+											<div class="media-line-item line-item" data-line="{{forloop.index}}" data-variant-id="{{ item.variant_id }}" data-product-id="{{ item.product.id }}">
+												<div class="media-left">
+													<div class="item-img">
+														<a href="{{ item.url }}">
+															<img src="{% if item.image > 0 %} {% if item.variant.image == empty %} {{ item.image | product_img_url : 'medium'}} {% else%} {{ item.variant.image | product_img_url : 'medium'}}{% endif %}{% else %}{{'no_image.jpg' | asset_url}}{% endif %}" alt="{{ item.title }}" />
+														</a>
+													</div>
+													{%-unless settings.promotion_hrvapp_use and item.price == 0 -%}
+													<div class="item-remove">
+														<a href="javascript:void(0)" onclick="HRT.Cart.removeItemCart(this,'/cart/change?line={{ forloop.index }}&quantity=0')" class="cart">Xóa</a>
+													</div>
+													{%-endunless-%}
+												</div>
+												<div class="media-right">
+													<div class="item-info">
+														<h3 class="item--title"><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
+
+														{% if item.product.variants.size > 1 %}
+											
+														
+														{%-if prmote_check-%}
+														<p class="item-variant item-variant-edit cart-variant-edit"  data-edit="{{item.url}}?variant={{item.variant_id}}">
+															<span>{{ item.variant.title }}</span>
+														</p>
+														{% else %}
+														<p class="item-variant"><span>{{ item.variant.title }}</span></p>
+														{%- endif -%}
+														
+														{%- endif -%}
+														{%-if settings.promotion_hrvapp_use and item.properties.Combo != nil-%}
+														<p class="item-prmote type_promote">{{item.properties.Combo | append: '' | split: '-' | last}}</p>
+														{%-endif-%}
+													</div>
+													<div class="item-price">
+														<p>
+															<span>{{item.price | money }}</span>
+															{% if item.product.compare_at_price > item.price  %}
+															<del>{{ item.variant.compare_at_price | money }}</del>
+															{% endif %}
+															{%-if settings.promotion_hrvapp_use and item.properties.BuyXGetY != nil-%}
+															<span class="ico-gift"><img src="{{settings.appbuyxgety_icon}}" alt="icon quà tặng"></span>
+															{%-endif-%}
+														</p>
+													</div>
+												</div>
+												<div class="media-total">
+													<div class="item-total-price">
+														<div class="price">
+															<span class="line-item-total">{{ item.line_price | money }}</span>
+														</div>
+													</div>
+													<div class="item-qty">
+														<div class="qty quantity-partent qty-click clearfix">
+															{%-if prmote_check-%}
+															<button type="button" class="qtyminus qty-btn">
+																<svg enable-background="new 0 0 10 10" viewBox="0 0 10 10" x="0" y="0"><polygon points="4.5 4.5 3.5 4.5 0 4.5 0 5.5 3.5 5.5 4.5 5.5 10 5.5 10 4.5"></polygon></svg>
+															</button>
+															{%-endif-%}
+															<input type="text" size="4" name="updates[]" min="1" oriPrice="{{item.price_original}}" line="{{ forloop.index }}" productId="{{ item.product_id }}" variantId="{{ item.variant_id }}" id="updates_{{ item.variant_id }}" data-price="{{ item.price }}" value="{{ item.quantity }}" readonly  class="tc line-item-qty item-quantity" />
+															{%-if prmote_check-%}
+															<button type="button" class="qtyplus qty-btn">
+																<svg enable-background="new 0 0 10 10" viewBox="0 0 10 10" x="0" y="0"><polygon points="10 4.5 5.5 4.5 5.5 0 4.5 0 4.5 4.5 0 4.5 0 5.5 4.5 5.5 4.5 10 5.5 10 5.5 5.5 10 5.5"></polygon></svg>
+															</button>
+															{%-endif-%}
+														</div>
+													</div>
+
+												</div>
+											</div>
+											{% endfor %}
+											{%- if still == false-%}{%-assign checkUnActiveApp = '' -%}{%- endif -%}
+=============================================================================================================
+<script>	
+	{%-if settings.promotion_hrvapp_use and settings.promotion_hrvapp == 'appbuyxgety' or settings.promotion_hrvapp == 'appcombo'-%}
+	function delayTime2 (func, wait) {
+		return function() {
+			var that = this,
+					args = [].slice(arguments);
+			clearTimeout(func._throttleTimeout);
+			func._throttleTimeout = setTimeout(function() {
+				func.apply(that, args);
+			}, wait);
+		};
+	}
+	$(document).on('click', '.qty-click .qtyplus', function(e){
+		 e.preventDefault();
+		 var input = $(this).parent('.quantity-partent').find('input');
+		 var currentVal = parseInt(input.val());
+		 if (!isNaN(currentVal)) {
+			 input.val(currentVal + 1);
+		 } else {
+			 input.val(1);
+		 }
+	 });
+	 $(document).on('click', ".qty-click .qtyminus", function(e){
+		 e.preventDefault();
+		 var input = $(this).parent('.quantity-partent').find('input');
+		 var currentVal = parseInt(input.val());
+		 if (!isNaN(currentVal) && currentVal > 1) {
+			 input.val(currentVal - 1);
+		 } else {
+			 input.val(1);
+		 }
+	 });	 
+	 {%-if settings.promotion_hrvapp == 'appbuyxgety'-%}
+	 $(document).on('click', '.qty-click .qtyplus', delayTime2(function(){
+		 var input = $(this).parent('.quantity-partent').find('input');
+		 $(this).parent('.quantity-partent').find('.qtyminus').removeClass('stop');
+		 var line = input.attr('line');
+		 var vId = input.attr('variantid');
+		 var pId = input.attr('productid');
+		 var currentQty = parseInt(input.val());
+		 HRT.Cart.updatePriceChange('plus',line,vId,pId,currentQty);
+	 },500));
+		$(document).on('click','.qty-click .qtyminus', delayTime2(function(){
+			if(!$(this).hasClass('stop')){
+				var input = $(this).parent('.quantity-partent').find('input');
+				var line = input.attr('line');
+				var vId = input.attr('variantid');
+				var pId = input.attr('productid');
+				var currentQty = parseInt(input.val());
+				HRT.Cart.updatePriceChange('minus',line,vId,pId,currentQty);
+			}
+		},500));
+		{%-elsif settings.promotion_hrvapp == 'appcombo'-%}
+		$(document).on('click', '.qty-click .qtyplus,.qty-click .qtyminus', delayTime2(function(){
+			comboApp.comboUpdateCart();
+		},500));
+		 $(document).on('change', '.qty-click .item-quantity', delayTime2(function() {				
+			 comboApp.comboUpdateCart();
+		 }, 500));
+		 {%-endif-%}
+		 {%-else-%}
+		 function unPromote(tmp){
+			 var self = this;
+			 tmp += "&note="+$('#note').val();
+			 $.post('/cart', tmp).always(function() {
+				 setTimeout(function() { location.reload(); }, 500);
+			 });
+		 }
+			//console.log("{{checkUnActiveApp}}");
+			{%-if checkUnActiveApp != ''-%} 
+			unPromote("{{checkUnActiveApp}}");
+			 {%-else-%}				
+			 document.addEventListener('DOMContentLoaded', function() {	
+				 HRT.Cart.initQuantityCart(); 
+			 });
+				{%-endif-%}
+				{%-endif-%}
+</script>

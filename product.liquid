@@ -1,0 +1,142 @@
+{% if settings.promotion_hrvapp_use and settings.promotion_hrvapp == 'appbuyxgety' %}
+							<div class="product-buyxgety selector-buyxgety" id="detail-product">							
+								<div id="buyxgety-program" class="d-none">
+									<div class="buyxgety-heading">
+										<h3>Các sản phẩm được tặng kèm</h3>						
+										<p>Chọn 1 trong các loại quà tặng</p>
+									</div>							
+									<div id="buyxgety-product-list" data-id="{{product.id}}" data-title="{{product.title}}">
+										<div class="buyxgety_content clearfix">									
+											<div class="buyxgety_lists"></div>
+										</div>
+							           		</div>
+								</div>
+							</div>
+							{% endif %}
+
+
+
+                            {%-if settings.promotion_hrvapp_use and settings.promotion_hrvapp == 'appbuyxgety' -%}
+<script>
+	$(document).ready(function(){
+		$('#add-to-cart').click(function(e){	
+			if(!check_variant_add && swatch_size !=0 ){
+				if($(".product-variants.check-action-variant").length == 0){
+					$(".product-variants").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".sidebar-action-bottom #add-item-form-sb").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".product-variants").addClass("check-action-variant");
+				}
+				else{
+					$('.check-action-tt').removeClass('text-effect');
+					setTimeout(function(){
+						$('.check-action-tt').addClass('text-effect');
+					}, 100);
+				}
+			}
+			else {
+				e.preventDefault();
+				var variant_id = $('#product-select').val(),
+						quantity = $('#quantity').val(),
+						title = $('.productDetail--content .product-heading h1').html();
+				buyXgetY.addCartBuyXGetY_detail(false,variant_id,currentId,quantity,title,"normal",function(){
+					HRT.All.getCartModal();	
+					//console.log(1)
+					//if($(window).width() < 992){
+					$('body').removeClass('locked-scroll').addClass('body-showcart');
+					$('.sidebar-main').addClass('is-show-right');
+					$('.sidebar-main .sitenav-cart').addClass('show');
+					//}
+				});
+			}
+		});	
+		$('#buy-now').click(function(e){	
+			if(!check_variant_add && swatch_size !=0 ){
+				if($(".product-variants.check-action-variant").length == 0){
+					$(".product-variants").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".sidebar-action-bottom #add-item-form-sb").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".product-variants").addClass("check-action-variant");
+				}
+				else{
+					$('.check-action-tt').removeClass('text-effect');
+					setTimeout(function(){
+						$('.check-action-tt').addClass('text-effect');
+					}, 100);
+				}
+			}
+			else {
+				e.preventDefault();
+				var variant_id = $('#product-select').val(),
+						quantity = $('#quantity').val(),
+						title = $('.productDetail--content .product-heading h1').html();
+				buyXgetY.addCartBuyXGetY_detail(false,variant_id,currentId,quantity,title,"normal buynow",function(){
+					window.location = "/cart";
+				});
+			}
+		});		
+	});
+</script>
+{%-else-%}
+<script>
+	$(document).ready(function(){
+		$('#add-to-cart').click(function(e){	
+			if(!check_variant_add && swatch_size !=0 ){
+				if($(".product-variants.check-action-variant").length == 0){
+					$(".product-variants").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".sidebar-action-bottom #add-item-form-sb").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".product-variants").addClass("check-action-variant");
+				}
+				else{
+					$('.check-action-tt').removeClass('text-effect');
+					setTimeout(function(){
+						$('.check-action-tt').addClass('text-effect');
+					}, 100);
+				}
+			}
+			else{
+				e.preventDefault();			
+				$(this).addClass('clicked_buy');
+				HRT.All.addItemShowModalCart($('#product-select').val());
+				if($(window).width() < 992){
+					$('body').removeClass('locked-scroll').addClass('body-showcart');
+					$('.sidebar-main').addClass('is-show-right');
+					$('.sidebar-main .sitenav-cart').addClass('show');
+				}
+			}
+		});
+		$('#buy-now').click(function(e){	
+			if(!check_variant_add && swatch_size !=0 ){
+				if($(".product-variants.check-action-variant").length == 0){
+					$(".product-variants").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".sidebar-action-bottom #add-item-form-sb").prepend("<p class='check-action-tt'>Vui lòng chọn biến thể</p>");
+					$(".product-variants").addClass("check-action-variant");
+				}
+				else{
+					$('.check-action-tt').removeClass('text-effect');
+					setTimeout(function(){
+						$('.check-action-tt').addClass('text-effect');
+					}, 100);
+				}
+			}
+			else{
+				e.preventDefault() ;
+				var id = $('#product-select').val();
+				var quantity = $('#quantity').val();
+				var params = {
+					type: 'POST',
+					url: '/cart/add.js',
+					async : false,
+					data: 'quantity=' + quantity + '&id=' + id,
+					dataType: 'json',
+					success: function(line_item) {
+						window.location = '/cart';
+					},
+					error: function(XMLHttpRequest, textStatus) {
+						Haravan.onError(XMLHttpRequest, textStatus);
+					}
+				};
+				jQuery.ajax(params);
+			}
+		});
+	});
+</script>
+{%-endif-%}

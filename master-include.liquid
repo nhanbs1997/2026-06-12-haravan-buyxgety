@@ -1,0 +1,7 @@
+{%-if settings.promotion_hrvapp_use-%}
+	{%-if settings.promotion_hrvapp == 'appcombo'-%}
+	<link href="{{ 'app-combo.js'  | asset_url }}" rel="preload" as="script" type="text/javascript">
+	{%-elsif settings.promotion_hrvapp == 'appbuyxgety'-%}
+	<link href="{{ 'app-buyxgety.js' | asset_url }}" rel="preload" as="script" type="text/javascript">	
+	{%-endif-%}
+{%-endif-%}

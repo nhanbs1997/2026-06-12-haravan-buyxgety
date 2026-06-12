@@ -1,0 +1,9 @@
+{%-if settings.promotion_hrvapp_use-%}
+	{%-if settings.promotion_hrvapp == 'appcombo'-%}
+		<script type="text/javascript" src="{{ 'app-combo.js'  | asset_url }}" defer></script>
+	{%-elsif settings.promotion_hrvapp == 'appbuyxgety'-%}
+		<script type="text/javascript" src="{{ 'app-buyxgety.js' | asset_url }}" defer></script>
+	{%-endif-%}
+{%-endif-%}	
+
+

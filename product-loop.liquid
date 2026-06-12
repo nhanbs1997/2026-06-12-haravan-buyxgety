@@ -1,0 +1,5 @@
+{% if settings.promotion_hrvapp_use and settings.promotion_hrvapp == 'appcombo' or settings.promotion_hrvapp == 'appbuyxgety' %}
+			<div class="gift product_gift_label d-none" data-id="{{product.id}}">
+				<img class="lazyload" data-src="{{ settings.combo_icon }}" src="{{ settings.combo_icon }}" alt="icon quà tặng">
+			</div>
+			{% endif %}
