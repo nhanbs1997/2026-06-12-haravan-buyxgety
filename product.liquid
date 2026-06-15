@@ -1,3 +1,29 @@
+<script>
+	var currentId = {{product.id}};
+	var check_variant_add = false;
+	var pro_template = "{{settings.product_layout_style}}";
+	
+	var vrIdParam  = true,  current_id = {{ product.variants.first.id }};
+	{% if product.available %}
+	var selectedVariant = {
+		id: {{ product.selected_or_first_available_variant.id }},
+		option1: "{{ product.selected_or_first_available_variant.option1 }}",
+		option2: "{{ product.selected_or_first_available_variant.option2 }}",
+		option3: "{{ product.selected_or_first_available_variant.option3 }}"
+	};
+	{% else %}
+	var selectedVariant = {
+		id: {{ product.variants.first.id }},
+		option1: "{{ product.variants.first.option1 }}",
+		option2: "{{ product.variants.first.option2 }}",
+		option3: "{{ product.variants.first.option3 }}"	
+	}
+	{% endif %}
+
+</script>
+
+
+
 {% if settings.promotion_hrvapp_use and settings.promotion_hrvapp == 'appbuyxgety' %}
 							<div class="product-buyxgety selector-buyxgety" id="detail-product">							
 								<div id="buyxgety-program" class="d-none">
